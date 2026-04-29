@@ -1,38 +1,37 @@
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
     public GameState currentState;
 
     void Awake()
     {
-       if  (Instance == null)
+        if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
     {
-        currentState = GameState.Playing;
-        Time.timeScale = 5f;
+        Time.timeScale = 1f;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            PauseGame();
             if (currentState == GameState.Playing)
             {
                 PauseGame();
             }
-            
             else if (currentState == GameState.Paused)
             {
                 ResumeGame();
@@ -42,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     public void Startgame()
     {
-         Time.timeScale = 0f;
+        Time.timeScale = 1f;
         currentState = GameState.Playing;
         SceneManager.LoadScene("Game");
     }
@@ -51,21 +50,23 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         currentState = GameState.Paused;
-
+        Debug.Log("Game Paused");
     }
 
     public void ResumeGame()
     {
         Time.timeScale = 1f;
         currentState = GameState.Playing;
-        Debug.Log("game Resume");
+        Debug.Log("Game Resumed");
     }
 
     public void GameOver()
     {
-        Debug.Log("Game over");
+        Time.timeScale = 0f;
         currentState = GameState.GameOver;
+        Debug.Log("Game Over!");
     }
+
     public void RestartToMenu()
     {
         Time.timeScale = 1f;
