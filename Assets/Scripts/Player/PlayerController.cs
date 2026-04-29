@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerData playerData;
     private float currentHP;
-    private float speed ;
+    private float speed;
     private PlayerInput playerInput;
     private Vector2 moveInput;
 
@@ -13,36 +13,43 @@ public class PlayerController : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
 
+        if (playerData == null)
+        {
+            Debug.LogError("PlayerData belum di-assign di Inspector!");
+            return;
+        }
+
+        // Ambil speed dari ScriptableObject PlayerData
         currentHP = playerData.maxHP;
         speed = playerData.moveSpeed;
     }
-    
-    
+
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameState.Playing)
+            return;
 
-        
-        moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
-        float h = moveInput.x;
-        float v = moveInput.y;
-
-        transform.Translate(new Vector3(h, v, 0) * speed * Time.deltaTime);
+        if (playerInput != null)
+        {
+            moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
+            
+            Vector3 direction = new Vector3(moveInput.x, moveInput.y, 0);
+            transform.Translate(direction * speed * Time.deltaTime);
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            TakeDamage(0.1f);
+            TakeDamage(playerData.DamagePerSecond * Time.deltaTime);
         }
     }
 
     void TakeDamage(float dmg)
     {
         currentHP -= dmg;
-        Debug.Log("Player HP: " + currentHP);
-
-        if (currentHP <= 0)
+        if (currentHP <= 0 && GameManager.Instance != null)
         {
             GameManager.Instance.GameOver();
         }
