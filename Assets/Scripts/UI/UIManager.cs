@@ -5,23 +5,39 @@ public class UIManager : MonoBehaviour
 {
     public void StartGame()
     {
-        GameManager.Instance.currentState = GameState.Playing;
-        Time.timeScale = 2f;
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-
-    public void Restart()
-    {
-        GameManager.Instance.RestartToMenu();
-        Time.timeScale = 1f;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.Startgame();
+        }
+        else
+        {
+            SceneManager.LoadScene("Game");
+        }
     }
 
     public void ResumeGame()
     {
-        GameManager.Instance.ResumeGame();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResumeGame();
+        }
+    }
+
+    public void Restart()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RestartToMenu();
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Keluar Game...");
+        Application.Quit();
     }
 }
